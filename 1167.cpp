@@ -3,42 +3,59 @@ using namespace std;
 
 typedef long long int ll;
 
+typedef struct pessoa{
+    string nome;
+    ll numero;
+    ll anterior;
+    ll proximo;
+} pessoa;
+
 int main(){
     ll n;
-    vector<ll> numeros;
-    vector <string> nomes;
+    vector<pessoa> pessoas;
 
     while(true){
         cin >> n;
         if(n == 0) break;
         for (ll i = 0; i < n; i++) {
-            string nome;
-            cin >> nome;
-            nomes.push_back(nome);
-            
-            ll num;
-            cin >> num;
-            numeros.push_back(num);
+            pessoa p;
+            cin >> p.nome >> p.numero;
+            if(i == 0) p.anterior = n-1;
+            else p.anterior = i-1;
+            if(i == n-1) p.proximo = 0;
+            else p.proximo = i+1;
+            pessoas.push_back(p);
         }
-        ll num = numeros[0]+1;
+        ll num = pessoas[0].numero;
+        ll atual=0;
 
-        while(numeros.size() > 1){
-            ll dif = numeros.size() - num;
+        while(n > 1){
 
-            num = num % 2 == 0 ? num % numeros.size() : abs(dif) % numeros.size();
+            if(num % 2 != 0){
+                //cout<<"HORARIO" <<endl;
+                for(ll i = 0; i < num; i++){
+                    atual = pessoas[atual].proximo;
+                }
+            }   
+            else{
+                //cout<<"ANTI-HORARIO" <<endl;
+                for(ll i = 0; i < num; i++){
+                    atual = pessoas[atual].anterior;
+                }
+            }
+            num = pessoas[atual].numero;
+            //cout<<"atual: "<<pessoas[atual].nome<<endl;
+            pessoas[pessoas[atual].anterior].proximo = pessoas[atual].proximo;
+            pessoas[pessoas[atual].proximo].anterior = pessoas[atual].anterior;
+            //pessoas.erase(pessoas.begin()+atual);
+            //atual = num%2 == 0 ? pessoas[atual].proximo : pessoas[atual].anterior;
+            n--;
 
-            ll salva = numeros[num];
-
-            numeros.erase(numeros.begin()+num);
-            nomes.erase(nomes.begin()+num);
-            num = salva;
         }
         printf("Vencedor(a): ");
-        cout << nomes[0] << endl;
+        cout << pessoas[pessoas[atual].proximo].nome << endl;
         
-        
-        numeros.clear();
-        nomes.clear();
+        pessoas.clear();
     }
 
 }
